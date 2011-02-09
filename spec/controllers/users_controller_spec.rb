@@ -55,11 +55,13 @@ describe UsersController do
       response.should have_selector("input[name='user[email]'][type='text']")
     end
 
+    # Fixme this test does not seem to work right...
     it "should have a password field" do
       get :new
       response.should have_selector("input[name='user[password]'][type='password']")
     end
 
+    # Fixme this test does not seem to work right...
     it "should have a password confirmation field" do
       get :new
       response.should have_selector("input[name='user[password_confirmation]'][type='password']")
@@ -71,7 +73,8 @@ describe UsersController do
   describe "POST 'create'" do
     describe "failure" do
       before(:each) do
-        @attr = { :name => "", :email => "", :password => "", :password_confirmation => ""}
+        @attr = { :name => "BAD", :email => "BAD", :password => "BAD", 
+          :password_confirmation => "BAD"}
       end
 
       it "should not create a user" do
@@ -89,6 +92,20 @@ describe UsersController do
         post :create, :user => @attr
         response.should render_template('new')
       end
+
+      it "should clear the password entry" do
+        post :create, :user => @attr
+        response.should have_selector("input[name='user[password]'][type='password']", 
+                                      :content => "")
+      end
+
+      it "should clear the password confirmation entry" do
+        post :create, :user => @attr
+        response.should have_selector(
+               "input[name='user[password_confirmation]'][type='password']", 
+                                      :content => "")
+      end
+
     end
 
     describe "success" do
